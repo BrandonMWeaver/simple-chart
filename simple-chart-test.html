@@ -2,6 +2,14 @@
 <html>
     <head>
         <title>Simple Chart Test</title>
+        <div class="chart-container" style="width: 640px; height: 480px;"></div>
     </head>
-    <body></body>
+    <body>
+        <script src="./SimpleChart.js"></script>
+        <script>
+            const chart = new SimpleChart(0, 100, 0, 100);
+            chart.append(document.querySelector(".chart-container"));
+            chart.setColor("#053737");
+        </script>
+    </body>
 </html>
