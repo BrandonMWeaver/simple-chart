@@ -1,15 +1,39 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <style>
+            html, body {
+                margin: 0;
+            }
+            html {
+                padding: 0;
+            }
+            body {
+                padding: 50px;
+                background-color: #050505;
+            }
+        </style>
         <title>Simple Chart Test</title>
-        <div class="chart-container" style="width: 100%; height: calc(100vh - 15px);"></div>
+        <div class="chart-container" style="width: 100%; height: calc(100vh - 100px);"></div>
     </head>
     <body>
         <script src="./SimpleChart.js"></script>
         <script>
             const chart = new SimpleChart();
             chart.append(document.querySelector(".chart-container"));
-            chart.setData([75,50,0,50,100])
+            let cases = { arr: [], color: "#00f" };
+            let deaths = { arr: [], color: "#f00" };
+            let recovered = { arr: [], color: "#0f0" };
+            fetch("https://covid19-api.org/api/timeline/us")
+            .then(r => r.json())
+            .then(o => {
+                cases.arr = o.map(x => x.cases).reverse();
+                deaths.arr = o.map(x => x.deaths).reverse();
+                recovered.arr = o.map(x => x.recovered).reverse();
+                chart.addData(cases);
+                chart.addData(deaths);
+                chart.addData(recovered);
+            });
         </script>
     </body>
 </html>
