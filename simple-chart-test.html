@@ -12,15 +12,35 @@
                 padding: 50px;
                 background-color: #050505;
             }
+            .legend {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-evenly;
+            }
+            p {
+                margin: 0;
+                font-family: monospace;
+                color: #fff;
+            }
         </style>
         <title>Simple Chart Test</title>
-        <div class="chart-container" style="width: 100%; height: calc(100vh - 100px);"></div>
+        <div class="legend">
+            <p style="margin: 0 10px 0 0; padding: 10px; width: 100%; text-align: center; background-color: #00f;">cases</p>
+            <p style="margin: 0 10px 0 0; padding: 10px; width: 100%; text-align: center; background-color: #f00;">deaths</p>
+            <p style="padding: 10px; width: 100%; text-align: center; background-color: #0f0;">recovered</p>
+        </div>
+        <div class="chart-container" style="position: relative; padding: 50px; width: calc(100% - 100px); height: calc(100vh - 235px);">
+            <p class="y-high" style="position: absolute; margin: 50px 0 0 0; top: 0; left: 0;"></p>
+            <p class="y-low" style="position: absolute; margin: 0 0 50px 0; bottom: 0; left: 0;"></p>
+            <p class="x-high" style="position: absolute; margin: 0 50px 0 0; bottom: 0; right: 0;"></p>
+            <p class="x-low" style="position: absolute; margin: 0 0 0 50px; bottom: 0; left: 0;"></p>
+        </div>
     </head>
     <body>
         <script src="./SimpleChart.js"></script>
         <script>
-            const chart = new SimpleChart();
-            chart.append(document.querySelector(".chart-container"));
+            const chart = new SimpleChart("svg");
+            chart.appendTo(document.querySelector(".chart-container"));
             let cases = { arr: [], color: "#00f" };
             let deaths = { arr: [], color: "#f00" };
             let recovered = { arr: [], color: "#0f0" };
@@ -33,6 +53,19 @@
                 chart.addData(cases);
                 chart.addData(deaths);
                 chart.addData(recovered);
+
+                let yHigh = Number.MIN_VALUE;
+                let yLow = Number.MAX_VALUE;
+                for (const set of [cases,deaths,recovered]) {
+                    for (const datum of set.arr) {
+                        if (datum > yHigh) yHigh = datum;
+                        if (datum < yLow) yLow = datum;
+                    }
+                }
+                document.querySelector("p.y-high").innerHTML = yHigh.toLocaleString();
+                document.querySelector("p.y-low").innerHTML = yLow.toLocaleString();
+                document.querySelector("p.x-high").innerHTML = o[0].last_update;
+                document.querySelector("p.x-low").innerHTML = o[o.length - 1].last_update;
             });
         </script>
     </body>

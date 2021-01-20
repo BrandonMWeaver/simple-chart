@@ -1,14 +1,22 @@
 class SimpleChart {
-    constructor() {
-        this.canvas = document.createElement("canvas");
-        this.context = this.canvas.getContext("2d");
+    constructor(type = "canvas") {
+        this.canvas = null;
+        this.context = null;
+        if (type === "canvas") {
+            this.canvas = document.createElement("canvas");
+            this.context = this.canvas.getContext("2d");
+        }
+        else if (type === "svg") {
+            this.canvas = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        }
+        else throw new Error("Invalid chart type\nChart type must be either canvas or svg");
 
         this.container = null;
         this.dataSet = [];
-        this.color = "#fff";
+        this.color = "#fff0";
     }
 
-    append = container => {
+    appendTo = container => {
         this.container = container;
         this.container.append(this.canvas);
 
@@ -28,16 +36,32 @@ class SimpleChart {
     }
 
     #setSize = () => {
-        this.canvas.style.width = "100%";
-        this.canvas.style.height = "100%";
-        this.canvas.width = this.canvas.offsetWidth * 2;
-        this.canvas.height = this.canvas.offsetHeight * 2;
+        if (this.context) {
+            this.canvas.style.width = "100%";
+            this.canvas.style.height = "100%";
+            this.canvas.width = this.canvas.offsetWidth * 2;
+            this.canvas.height = this.canvas.offsetHeight * 2;
+        }
+        else {
+            this.canvas.setAttributeNS(null, "width", "100%");
+            this.canvas.setAttributeNS(null, "height", "100%");
+        }
         this.#draw();
     }
 
     #draw = () => {
-        this.context.fillStyle = this.color;
-        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        if (this.context) {
+            this.context.fillStyle = this.color;
+            this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        }
+        else {
+            this.canvas.innerHTML = '';
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttributeNS(null, "width", "100%");
+            rect.setAttributeNS(null, "height", "100%");
+            rect.setAttributeNS(null, "fill", this.color);
+            this.canvas.append(rect);
+        }
         
         this.#drawData();
     }
@@ -59,19 +83,24 @@ class SimpleChart {
             let yPercentage = (data.arr[0] - yLow) / (yHigh - yLow) * 100;
             let y = this.canvas.height - this.canvas.height / 100 * yPercentage;
 
-            this.context.strokeStyle = data.color;
-            this.context.beginPath();
+            if (this.context) {
+                this.context.strokeStyle = data.color;
+                this.context.beginPath();
+            }
 
             for (let i = 0; i < data.arr.length; i++) {
-                this.context.moveTo(x, y);
+                if (this.context)
+                    this.context.moveTo(x, y);
                 x += xStep;
 
                 if (i + 1 < data.arr.length) {
                     yPercentage = (data.arr[i + 1] - yLow) / (yHigh - yLow) * 100;
                     y = this.canvas.height - this.canvas.height / 100 * yPercentage;
                     
-                    this.context.lineTo(x, y);
-                    this.context.stroke();
+                    if (this.context) {
+                        this.context.lineTo(x, y);
+                        this.context.stroke();
+                    }
                 }
             }
         }
