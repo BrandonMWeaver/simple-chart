@@ -77,11 +77,14 @@ class SimpleChart {
         }
 
         for (const data of this.dataSet) {
+            let line = null;
+            let [width, height] = this.context ? [this.canvas.width, this.canvas.height] : [this.canvas.getBBox().width, this.canvas.getBBox().height];
+
             let x = 0;
-            const xStep = this.canvas.width / (data.arr.length - 1);
+            const xStep = width / (data.arr.length - 1);
 
             let yPercentage = (data.arr[0] - yLow) / (yHigh - yLow) * 100;
-            let y = this.canvas.height - this.canvas.height / 100 * yPercentage;
+            let y = height - height / 100 * yPercentage;
 
             if (this.context) {
                 this.context.strokeStyle = data.color;
@@ -91,15 +94,26 @@ class SimpleChart {
             for (let i = 0; i < data.arr.length; i++) {
                 if (this.context)
                     this.context.moveTo(x, y);
+                else {
+                    line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", x);
+                    line.setAttribute("y1", y);
+                }
                 x += xStep;
 
                 if (i + 1 < data.arr.length) {
                     yPercentage = (data.arr[i + 1] - yLow) / (yHigh - yLow) * 100;
-                    y = this.canvas.height - this.canvas.height / 100 * yPercentage;
+                    y = height - height / 100 * yPercentage;
                     
                     if (this.context) {
                         this.context.lineTo(x, y);
                         this.context.stroke();
+                    }
+                    else {
+                        line.setAttribute("x2", x);
+                        line.setAttribute("y2", y);
+                        line.setAttribute("stroke", data.color);
+                        this.canvas.append(line);
                     }
                 }
             }
