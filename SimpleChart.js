@@ -14,6 +14,7 @@ class SimpleChart {
         this.container = null;
         this.dataSet = [];
         this.color = "#fff0";
+        this.strokeWidth = 1;
     }
 
     appendTo = container => {
@@ -33,6 +34,10 @@ class SimpleChart {
 
     setColor = color => {
         this.color = color;
+    }
+
+    setStrokeWidth = strokeWidth => {
+        this.strokeWidth = strokeWidth;
     }
 
     #setSize = () => {
@@ -107,12 +112,14 @@ class SimpleChart {
                     
                     if (this.context) {
                         this.context.lineTo(x, y);
+                        this.context.lineWidth = this.strokeWidth;
                         this.context.stroke();
                     }
                     else {
                         line.setAttribute("x2", x);
                         line.setAttribute("y2", y);
                         line.setAttribute("stroke", data.color);
+                        line.setAttribute("stroke-width", this.strokeWidth);
                         this.canvas.append(line);
                     }
                 }

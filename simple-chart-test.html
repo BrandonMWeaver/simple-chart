@@ -40,6 +40,7 @@
         <script src="./SimpleChart.js"></script>
         <script>
             const chart = new SimpleChart("svg");
+            chart.setStrokeWidth(3);
             chart.appendTo(document.querySelector(".chart-container"));
             let cases = { arr: [], color: "#00f" };
             let deaths = { arr: [], color: "#f00" };
