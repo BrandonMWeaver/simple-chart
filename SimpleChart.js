@@ -15,6 +15,8 @@ class SimpleChart {
         this.dataSet = [];
         this.color = "#fff0";
         this.strokeWidth = 1;
+
+        this.canvas.style.boxSizing = "border-box";
     }
 
     appendTo = container => {
@@ -36,8 +38,24 @@ class SimpleChart {
         this.color = color;
     }
 
+    setBorder = border => {
+        this.canvas.style.border = border;
+    }
+
     setStrokeWidth = strokeWidth => {
         this.strokeWidth = strokeWidth;
+    }
+
+    getMinMax = () => {
+        let min = Number.MAX_VALUE;
+        let max = Number.MIN_VALUE;
+        for (const data of this.dataSet) {
+            for (const datum of data.arr) {
+                if (datum < min) min = datum;
+                if (datum > max) max = datum;
+            }
+        }
+        return [min, max];
     }
 
     #setSize = () => {
@@ -72,33 +90,26 @@ class SimpleChart {
     }
 
     #drawData = () => {
-        let yLow = Number.MAX_VALUE;
-        let yHigh = Number.MIN_VALUE;
-        for (const data of this.dataSet) {
-            for (const datum of data.arr) {
-                if (datum < yLow) yLow = datum;
-                if (datum > yHigh) yHigh = datum;
-            }
-        }
+        let [yLow, yHigh] = this.getMinMax();
 
         for (const data of this.dataSet) {
             let line = null;
+
             let [width, height] = this.context ? [this.canvas.width, this.canvas.height] : [this.canvas.getBBox().width, this.canvas.getBBox().height];
             width -= this.strokeWidth;
             height -= this.strokeWidth;
 
-            let x = 0 + this.strokeWidth / 2;
             const xStep = width / (data.arr.length - 1);
 
-            let yPercentage = (data.arr[0] - yLow) / (yHigh - yLow) * 100;
-            let y = (height + this.strokeWidth / 2) - height / 100 * yPercentage;
+            let x = 0 + this.strokeWidth / 2;
+            let y = this.#getY(data.arr[0], height, yLow, yHigh);
 
             if (this.context) {
                 this.context.strokeStyle = data.color;
                 this.context.beginPath();
             }
 
-            for (let i = 0; i < data.arr.length; i++) {
+            for (let i = 1; i < data.arr.length; i++) {
                 if (this.context)
                     this.context.moveTo(x, y);
                 else {
@@ -108,26 +119,28 @@ class SimpleChart {
                 }
                 x += xStep;
 
-                if (i + 1 < data.arr.length) {
-                    yPercentage = (data.arr[i + 1] - yLow) / (yHigh - yLow) * 100;
-                    y = (height + this.strokeWidth / 2) - height / 100 * yPercentage;
-                    
-                    if (this.context) {
-                        this.context.lineTo(x, y);
-                        this.context.lineWidth = this.strokeWidth;
-                        this.context.lineCap = "round";
-                        this.context.stroke();
-                    }
-                    else {
-                        line.setAttribute("x2", x);
-                        line.setAttribute("y2", y);
-                        line.setAttribute("stroke", data.color);
-                        line.setAttribute("stroke-width", this.strokeWidth);
-                        line.setAttribute("stroke-linecap", "round");
-                        this.canvas.append(line);
-                    }
+                y = this.#getY(data.arr[i], height, yLow, yHigh);
+                
+                if (this.context) {
+                    this.context.lineTo(x, y);
+                    this.context.lineWidth = this.strokeWidth;
+                    this.context.lineCap = "round";
+                    this.context.stroke();
+                }
+                else {
+                    line.setAttribute("x2", x);
+                    line.setAttribute("y2", y);
+                    line.setAttribute("stroke", data.color);
+                    line.setAttribute("stroke-width", this.strokeWidth);
+                    line.setAttribute("stroke-linecap", "round");
+                    this.canvas.append(line);
                 }
             }
         }
+    }
+
+    #getY = (datum, height, low, high) => {
+        const yPercentage = (datum - low) / (high - low) * 100;
+        return (height + this.strokeWidth / 2) - height / 100 * yPercentage;
     }
 }
