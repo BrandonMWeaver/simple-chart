@@ -84,12 +84,14 @@ class SimpleChart {
         for (const data of this.dataSet) {
             let line = null;
             let [width, height] = this.context ? [this.canvas.width, this.canvas.height] : [this.canvas.getBBox().width, this.canvas.getBBox().height];
+            width -= this.strokeWidth;
+            height -= this.strokeWidth;
 
-            let x = 0;
+            let x = 0 + this.strokeWidth / 2;
             const xStep = width / (data.arr.length - 1);
 
             let yPercentage = (data.arr[0] - yLow) / (yHigh - yLow) * 100;
-            let y = height - height / 100 * yPercentage;
+            let y = (height + this.strokeWidth / 2) - height / 100 * yPercentage;
 
             if (this.context) {
                 this.context.strokeStyle = data.color;
@@ -108,11 +110,12 @@ class SimpleChart {
 
                 if (i + 1 < data.arr.length) {
                     yPercentage = (data.arr[i + 1] - yLow) / (yHigh - yLow) * 100;
-                    y = height - height / 100 * yPercentage;
+                    y = (height + this.strokeWidth / 2) - height / 100 * yPercentage;
                     
                     if (this.context) {
                         this.context.lineTo(x, y);
                         this.context.lineWidth = this.strokeWidth;
+                        this.context.lineCap = "round";
                         this.context.stroke();
                     }
                     else {
@@ -120,6 +123,7 @@ class SimpleChart {
                         line.setAttribute("y2", y);
                         line.setAttribute("stroke", data.color);
                         line.setAttribute("stroke-width", this.strokeWidth);
+                        line.setAttribute("stroke-linecap", "round");
                         this.canvas.append(line);
                     }
                 }

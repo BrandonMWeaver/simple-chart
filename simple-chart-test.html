@@ -25,9 +25,9 @@
         </style>
         <title>Simple Chart Test</title>
         <div class="legend">
-            <p style="margin: 0 10px 0 0; padding: 10px; width: 100%; text-align: center; background-color: #00f;">cases</p>
-            <p style="margin: 0 10px 0 0; padding: 10px; width: 100%; text-align: center; background-color: #f00;">deaths</p>
-            <p style="padding: 10px; width: 100%; text-align: center; background-color: #0f0;">recovered</p>
+            <p style="margin: 0 10px 0 0; padding: 10px; width: 100%; text-align: center; background-color: #ff6905;">cases</p>
+            <p style="margin: 0 10px 0 0; padding: 10px; width: 100%; text-align: center; background-color: #ff0569;">deaths</p>
+            <p style="padding: 10px; width: 100%; text-align: center; background-color: #059b69;">recovered</p>
         </div>
         <div class="chart-container" style="position: relative; padding: 50px; width: calc(100% - 100px); height: calc(100vh - 235px);">
             <p class="y-high" style="position: absolute; margin: 50px 0 0 0; top: 0; left: 0;"></p>
@@ -40,12 +40,12 @@
         <script src="./SimpleChart.js"></script>
         <script>
             const chart = new SimpleChart("svg");
-            chart.setStrokeWidth(3);
+            chart.setStrokeWidth(10);
             chart.appendTo(document.querySelector(".chart-container"));
-            let cases = { arr: [], color: "#00f" };
-            let deaths = { arr: [], color: "#f00" };
-            let recovered = { arr: [], color: "#0f0" };
-            fetch("https://covid19-api.org/api/timeline/us")
+            let cases = { arr: [], color: "#ff6905" };
+            let deaths = { arr: [], color: "#ff0569" };
+            let recovered = { arr: [], color: "#059b69" };
+            fetch("https://covid19-api.org/api/timeline/br")
             .then(r => r.json())
             .then(o => {
                 cases.arr = o.map(x => x.cases).reverse();
