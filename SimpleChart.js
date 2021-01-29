@@ -98,7 +98,7 @@ class SimpleChart {
 
     #drawData = () => {
         const [yLow, yHigh] = this.getMinMax();
-        const [width, height] = [this.canvas.width - this.strokeWidth, this.canvas.height - this.strokeWidth];
+        const [width, height] = this.#getWidthHeight();
 
         for (const data of this.dataSet) {
             const xStep = width / (data.arr.length - 1);
@@ -125,7 +125,7 @@ class SimpleChart {
 
     #drawDataPath = () => {
         const [yLow, yHigh] = this.getMinMax();
-        const [width, height] = [this.canvas.getBBox().width - this.strokeWidth, this.canvas.getBBox().height - this.strokeWidth];
+        const [width, height] = this.#getWidthHeight();
 
         for (const data of this.dataSet) {
             let x = 0 + this.strokeWidth / 2;
@@ -156,7 +156,7 @@ class SimpleChart {
 
     #drawDataLine = () => {
         const [yLow, yHigh] = this.getMinMax();
-        const [width, height] = [this.canvas.getBBox().width - this.strokeWidth, this.canvas.getBBox().height - this.strokeWidth];
+        const [width, height] = this.#getWidthHeight();
 
         for (const data of this.dataSet) {
             let x = 0 + this.strokeWidth / 2;
@@ -181,6 +181,13 @@ class SimpleChart {
                 this.canvas.append(line);
             }
         }
+    }
+
+    #getWidthHeight = () => {
+        return this.type === "canvas" ?
+        [this.canvas.width - this.strokeWidth, this.canvas.height - this.strokeWidth]
+        :
+        [this.canvas.getBBox().width - this.strokeWidth, this.canvas.getBBox().height - this.strokeWidth];
     }
 
     #getY = (datum, height, low, high) => {
