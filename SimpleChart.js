@@ -1,6 +1,8 @@
 class SimpleChart {
-    constructor(type = "canvas") {
+    constructor(type = "canvas", mode = "line") {
         this.type = type;
+        this.mode = mode;
+
         this.canvas = null;
         this.context = null;
 
@@ -8,10 +10,10 @@ class SimpleChart {
             this.canvas = document.createElement("canvas");
             this.context = this.canvas.getContext("2d");
         }
-        else if (this.type.split('-')[0] === "svg") {
+        else if (this.type === "svg") {
             this.canvas = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         }
-        else throw new Error("Invalid chart type\nChart type must be canvas, svg-line, or svg-path");
+        else throw new Error("Invalid chart type\nChart type must be canvas or svg");
 
         this.container = null;
         this.dataSet = [];
@@ -36,6 +38,10 @@ class SimpleChart {
         this.#draw();
     }
 
+    setMode = mode => {
+        this.mode = mode;
+    }
+    
     setColor = color => {
         this.color = color;
     }
@@ -89,11 +95,14 @@ class SimpleChart {
         }
         
         if (this.type === "canvas")
-            this.#drawData();
-        else if (this.type === "svg-line")
-            this.#drawDataLine();
-        else
-            this.#drawDataPath();
+            if (this.mode === "line")
+                this.#drawData();
+        else if (this.type === "svg") {
+            if (this.mode === "line")
+                this.#drawDataLine();
+            else if (this.mode === "path")
+                this.#drawDataPath();
+        }
     }
 
     #drawData = () => {
