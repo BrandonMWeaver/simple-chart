@@ -4,47 +4,46 @@
         <style>
             html, body {
                 margin: 0;
-            }
-            html {
-                padding: 0;
+                padding-top: 0;
             }
             body {
-                padding: 10px;
                 background-color: #050505;
             }
-            .legend {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-evenly;
+            .chart-container {
+                float: left;
+                margin: 10px 0 0 10px;
+                width: calc(50% - 15px);
+                height: calc(50vh - 15px);
             }
-            p {
-                margin: 0;
-                text-align: center;
-                font-family: monospace;
-                color: #fff;
+            .three {
+                width: calc(100% - 20px);
             }
         </style>
         <title>Simple Chart Test</title>
     </head>
     <body>
-        <div class="legend">
-            <p style="margin: 0 10px 0 0; padding: 10px; width: 100%; background-color: #ff6905;">cases</p>
-            <p style="margin: 0 10px 0 0; padding: 10px; width: 100%; background-color: #ff0569;">deaths</p>
-            <p style="padding: 10px; width: 100%; background-color: #059b69;">recovered</p>
-        </div>
-        <div class="chart-container" style="position: relative; padding: 100px; width: calc(100% - 200px); height: calc(100vh - 255px);">
-            <p class="y-high" style="position: absolute; margin: 100px 0 0 0; top: 0; left: 0;"></p>
-            <p class="y-low" style="position: absolute; margin: 0 0 95px 0; bottom: 0; left: 0;"></p>
-            <p class="x-high" style="position: absolute; margin: 0 100px 0 0; bottom: 0; right: 0;"></p>
-            <p class="x-low" style="position: absolute; margin: 0 0 0 100px; bottom: 0; left: 0;"></p>
-        </div>
+        <div class="chart-container one"></div>
+        <div class="chart-container two"></div>
+        <div class="chart-container three"></div>
         <script src="./SimpleChart.js"></script>
         <script>
-            const chartContainer = document.querySelector(".chart-container");
-            const chart = new SimpleChart("svg");
-            chart.setBorder("1px solid #fff");
-            chart.setStrokeWidth(2);
-            chart.appendTo(chartContainer);
+            const chartContainer1 = document.querySelector(".chart-container.one");
+            const chart1 = new SimpleChart("svg");
+            chart1.setBorder("1px solid #fff");
+            chart1.setStrokeWidth(1);
+            chart1.appendTo(chartContainer1);
+
+            const chartContainer2 = document.querySelector(".chart-container.two");
+            const chart2 = new SimpleChart("svg");
+            chart2.setBorder("1px solid #fff");
+            chart2.setStrokeWidth(1);
+            chart2.appendTo(chartContainer2);
+
+            const chartContainer3 = document.querySelector(".chart-container.three");
+            const chart3 = new SimpleChart("svg");
+            chart3.setBorder("1px solid #fff");
+            chart3.setStrokeWidth(1);
+            chart3.appendTo(chartContainer3);
 
             let cases = { arr: [], color: "#ff6905" };
             let deaths = { arr: [], color: "#ff0569" };
@@ -64,20 +63,28 @@
                 cases.arr = o.map(x => x.cases).reverse();
                 deaths.arr = o.map(x => x.deaths).reverse();
                 recovered.arr = o.map(x => x.recovered).reverse();
-                chart.addData(cases);
-                chart.addData(deaths);
-                chart.addData(recovered);
 
-                let [yLow, yHigh] = chart.getMinMax();
+                chart1.addData(cases);
+                chart1.addData(deaths);
+                chart1.addData(recovered);
 
-                document.querySelector("p.y-high").innerHTML = yHigh.toLocaleString();
-                document.querySelector("p.y-low").innerHTML = yLow.toLocaleString();
-                document.querySelector("p.x-high").innerHTML = o[0].last_update;
-                document.querySelector("p.x-low").innerHTML = o[o.length - 1].last_update;
+                chart2.addData(cases);
+                chart2.addData(deaths);
+                chart2.addData(recovered);
+
+                chart3.addData(cases);
+                chart3.addData(deaths);
+                chart3.addData(recovered);
             })
             .catch(() => {
-                chart.addData({ arr: generateRandomData(), color: "#059b9b" });
-                chart.addData({ arr: generateRandomData(), color: "#9b059b" });
+                chart1.addData({ arr: generateRandomData(), color: "#059b9b" });
+                chart1.addData({ arr: generateRandomData(), color: "#9b059b" });
+
+                chart2.addData({ arr: generateRandomData(), color: "#059b9b" });
+                chart2.addData({ arr: generateRandomData(), color: "#9b059b" });
+
+                chart3.addData({ arr: generateRandomData(), color: "#059b9b" });
+                chart3.addData({ arr: generateRandomData(), color: "#9b059b" });
             });
         </script>
     </body>
