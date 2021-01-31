@@ -67,7 +67,7 @@ class SimpleChart {
     }
 
     #setSize = () => {
-        if (this.context) {
+        if (this.type === "canvas") {
             this.canvas.style.width = "100%";
             this.canvas.style.height = "100%";
             this.canvas.width = this.canvas.offsetWidth * 2;
@@ -81,9 +81,12 @@ class SimpleChart {
     }
 
     #draw = () => {
-        if (this.context) {
+        if (this.type === "canvas") {
             this.context.fillStyle = this.color;
             this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+            if (this.mode === "line")
+                this.#drawData();
         }
         else {
             this.canvas.innerHTML = '';
@@ -92,12 +95,7 @@ class SimpleChart {
             rect.setAttribute("height", "100%");
             rect.setAttribute("fill", this.color);
             this.canvas.append(rect);
-        }
-        
-        if (this.type === "canvas")
-            if (this.mode === "line")
-                this.#drawData();
-        else if (this.type === "svg") {
+
             if (this.mode === "line")
                 this.#drawDataLine();
             else if (this.mode === "path")
